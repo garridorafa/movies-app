@@ -1,17 +1,22 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity } from "react-native";
 
 import { IMovie } from "../../types/movie";
 import MovieCard from "./MovieCard";
 
 type MoviesProps = {
-  movies: IMovie[] | null;
+  movies: IMovie[] | undefined;
+  handlePress: (item: {}) => void;
 };
 
-export default ({ movies }: MoviesProps) => (
+export default ({ movies, handlePress }: MoviesProps) => (
   <FlatList
     data={movies}
-    renderItem={(itemData) => <MovieCard movie={itemData.item} />}
+    renderItem={(itemData) => (
+      <TouchableOpacity onPress={() => handlePress(itemData.item)}>
+        <MovieCard movie={itemData.item} />
+      </TouchableOpacity>
+    )}
     keyExtractor={(itemData) => itemData.id.toString()}
   />
 );
