@@ -1,46 +1,22 @@
 const axios = require("axios").default;
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
+import Spinner from "./components/Spinner";
 import StarIcon from "./assets/start-icon.png";
+import useHttp from "./hooks/useHttp";
 
-const baseUrl = "https://api.themoviedb.org/3";
-
-const apiKey = "?api_key=572a752b603222159b7f28cfa392076e";
-
-interface IMovies {
-  title: string;
-  release_date: string;
-  vote_average: string;
-  poster_path: string;
-}
+const url = "/movie/now_playing";
 
 export default function App() {
-  const [movies, setMovies] = useState<IMovies[] | null>(null);
+  const { data: movies, error, isLoading } = useHttp(url);
 
-  const [data, setData] = useState({});
-  console.log(data);
-
-  useEffect(() => {
-    const request = async () => {
-      await axios
-        .get(baseUrl + "/movie/now_playing" + apiKey)
-        .then((response: any) => {
-          setMovies(response.data.results);
-          setData(response.data);
-        })
-        .catch((error: any) => {
-          console.log(error);
-        });
-    };
-    request();
-  }, []);
+  if (error) throw error;
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Movie on theatre!</Text>
-      {movies && (
+      {!isLoading ? (
         <FlatList
           data={movies}
           renderItem={(itemData) => (
@@ -132,8 +108,9 @@ export default function App() {
             </View>
           )}
         />
+      ) : (
+        <Spinner />
       )}
-
       <StatusBar style="auto" />
     </View>
   );
