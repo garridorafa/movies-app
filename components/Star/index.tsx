@@ -1,28 +1,42 @@
 import { Image, StyleSheet, View } from "react-native";
 
-import StarIcon from "../../assets/start-icon.png";
+import StarIcon from "../../assets/star-icon.png";
+import StartFullIcon from "../../assets/star-icon-full.jpg";
 
-type StarProps = {
-  rating: number | null;
+type StarRenderProps = {
+  img: any;
 };
 
-export default ({ rating }: StarProps) => {
+const StarRender = ({ img }: StarRenderProps) => (
+  <Image
+    style={{
+      width: 25,
+      height: 25,
+    }}
+    source={img}
+  />
+);
+
+type StarProps = {
+  rating?: number | null;
+  userRating?: number;
+};
+
+export default ({ rating, userRating }: StarProps) => {
   const width = rating ? (rating * 250) / 10 : 0;
 
   const stars = Array(10).fill(0);
 
   return (
     <View style={[styles.star, { width }]}>
-      {stars.map((_, i) => (
-        <Image
-          style={{
-            width: 25,
-            height: 25,
-          }}
-          source={StarIcon}
-          key={i}
-        />
-      ))}
+      {userRating !== undefined
+        ? stars.map((_, i) => (
+            <StarRender
+              img={i >= userRating ? StarIcon : StartFullIcon}
+              key={i}
+            />
+          ))
+        : stars.map((_, i) => <StarRender img={StartFullIcon} key={i} />)}
     </View>
   );
 };

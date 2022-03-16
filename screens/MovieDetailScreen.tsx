@@ -1,5 +1,6 @@
 import { Button, Image, StyleSheet, Text, View } from "react-native";
 import Spinner from "../components/Spinner";
+import Star from "../components/Star";
 import useFetch from "../hooks/useFetch";
 import { IGenre } from "../types/movie";
 
@@ -27,7 +28,7 @@ type CastingListProps = {
 };
 
 const CastingList = ({ casting }: CastingListProps) => (
-  <View style={styles.casting}>
+  <View style={styles.section}>
     <Text style={styles.subtitle}>Casting</Text>
     {casting.map((actor: any) => (
       <Text key={actor.id}>{`${actor.name} as ${actor.character}`}</Text>
@@ -63,6 +64,10 @@ export default ({ navigation }: ScreenProps) => {
           <Text>{classification}</Text>
           <Text style={styles.description}>Description: {movie?.overview}</Text>
           <CastingList casting={movie.cast} />
+          <View style={styles.section}>
+            <Text style={styles.subtitle}>Rate it</Text>
+            <Star rating={10} userRating={0} />
+          </View>
           <Button
             title="Back"
             onPress={() => {
@@ -92,7 +97,7 @@ const styles = StyleSheet.create({
   genreText: {
     padding: 5,
   },
-  casting: {
+  section: {
     marginBottom: 20,
   },
 });
