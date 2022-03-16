@@ -1,3 +1,5 @@
+import axios from "axios";
+import { useState } from "react";
 import { Button, Image, StyleSheet, Text, View } from "react-native";
 import Spinner from "../components/Spinner";
 import Star from "../components/Star";
@@ -5,6 +7,9 @@ import useFetch from "../hooks/useFetch";
 import { IGenre } from "../types/movie";
 
 import { ScreenProps } from "../types/screen";
+
+const baseUrl = "https://api.themoviedb.org/3";
+const apiKey = "api_key=572a752b603222159b7f28cfa392076e";
 
 type GenresListProps = {
   genres: IGenre[];
@@ -37,9 +42,23 @@ const CastingList = ({ casting }: CastingListProps) => (
 );
 
 export default ({ navigation }: ScreenProps) => {
+  const [userRating, setUserRating] = useState(0);
   const movieId = navigation.getParam("movieId");
 
   const { data: movie, error } = useFetch(movieId);
+
+  const handleRate = (rate: number) => {
+    setUserRating(rate);
+    axios
+      .get(`${baseUrl}/authentication/guest_session/new?${apiKey}`)
+      .then((resp) => {
+        const sessionId = resp.data.guest_session_id;
+        axios.post(
+          `${baseUrl}/movie/${movieId}/rating?${apiKey}&guest_session_id=${sessionId}`,
+          { value: rate }
+        );
+      });
+  };
 
   if (error) throw error;
 
@@ -66,7 +85,7 @@ export default ({ navigation }: ScreenProps) => {
           <CastingList casting={movie.cast} />
           <View style={styles.section}>
             <Text style={styles.subtitle}>Rate it</Text>
-            <Star rating={10} userRating={0} />
+            <Star rating={10} userRating={userRating} onRate={handleRate} />
           </View>
           <Button
             title="Back"
