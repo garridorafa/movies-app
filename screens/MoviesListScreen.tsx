@@ -4,15 +4,14 @@ import { StyleSheet, Text, View } from "react-native";
 import Movies from "../components/Movies";
 import Spinner from "../components/Spinner";
 import useFetchAll from "../hooks/useFetchAll";
-import { IMovie } from "../types/movie";
 import { ScreenProps } from "../types/screen";
 
 const url = "/movie/now_playing";
 
 export default ({ navigation }: ScreenProps) => {
   const { data: unsortedMovies, error, isLoading } = useFetchAll(url);
-  const handlePress = (movie: IMovie): void => {
-    navigation.navigate("MovieDetail", { movie });
+  const handlePress = (movieId: number): void => {
+    navigation.navigate("MovieDetail", { movieId });
   };
 
   if (error) throw error;

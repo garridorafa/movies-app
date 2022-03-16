@@ -13,7 +13,7 @@ export default ({ movies, handlePress }: MoviesProps) => (
   <FlatList
     data={movies}
     renderItem={(itemData) => (
-      <TouchableOpacity onPress={() => handlePress(itemData.item)}>
+      <TouchableOpacity onPress={() => handlePress(itemData.item.id)}>
         <MovieCard movie={itemData.item} />
       </TouchableOpacity>
     )}

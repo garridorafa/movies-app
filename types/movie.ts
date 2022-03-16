@@ -5,6 +5,12 @@ export interface IMovie {
   vote_average: number;
   poster_path: string;
   genre_ids: number[];
+  genres: IGenre[];
   overview: string;
   adult: boolean;
+}
+
+export interface IGenre {
+  id: number;
+  name: string;
 }
