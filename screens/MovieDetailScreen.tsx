@@ -12,7 +12,9 @@ type GenresListProps = {
 const GenresList = ({ genres }: GenresListProps) => (
   <View style={styles.genres}>
     {genres.map((genre) => (
-      <Text key={genre.id}>{genre.name}</Text>
+      <Text style={styles.genreText} key={genre.id}>
+        {genre.name}
+      </Text>
     ))}
   </View>
 );
@@ -86,7 +88,9 @@ const styles = StyleSheet.create({
   description: { margin: 20 },
   genres: {
     flexDirection: "row",
-    gap: 10,
+  },
+  genreText: {
+    padding: 5,
   },
   casting: {
     marginBottom: 20,
