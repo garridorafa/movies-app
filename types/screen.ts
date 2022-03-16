@@ -4,6 +4,6 @@ export type ScreenProps = {
   navigation: {
     navigate: (ScreenName: string, data: {}) => void;
     pop: () => void;
-    getParam: (paramName: string) => IMovie;
+    getParam: (paramName: string) => number;
   };
 };
