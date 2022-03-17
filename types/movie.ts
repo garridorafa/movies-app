@@ -14,3 +14,8 @@ export interface IGenre {
   id: number;
   name: string;
 }
+
+export interface ICast {
+  name: string;
+  character: string;
+}
