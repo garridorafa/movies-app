@@ -1,21 +1,24 @@
-import axios from "axios";
-import { useState } from "react";
-import { Button, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import Spinner from "../components/Spinner";
 import Star from "../components/Star";
 import useFetch from "../hooks/useFetch";
+import useRate from "../hooks/useRate";
 import { IGenre } from "../types/movie";
 
 import { ScreenProps } from "../types/screen";
-
-const baseUrl = "https://api.themoviedb.org/3";
-const apiKey = "api_key=572a752b603222159b7f28cfa392076e";
 
 type GenresListProps = {
   genres: IGenre[];
 };
 
-const GenresList = ({ genres }: GenresListProps) => (
+const GenresList = ({ genres = [] }: GenresListProps) => (
   <View style={styles.genres}>
     {genres.map((genre) => (
       <Text style={styles.genreText} key={genre.id}>
@@ -32,7 +35,7 @@ type CastingListProps = {
   }[];
 };
 
-const CastingList = ({ casting }: CastingListProps) => (
+const CastingList = ({ casting = [] }: CastingListProps) => (
   <View style={styles.section}>
     <Text style={styles.subtitle}>Casting</Text>
     {casting.map((actor: any) => (
@@ -42,31 +45,30 @@ const CastingList = ({ casting }: CastingListProps) => (
 );
 
 export default ({ navigation }: ScreenProps) => {
-  const [userRating, setUserRating] = useState(0);
   const movieId = navigation.getParam("movieId");
 
-  const { data: movie, error } = useFetch(movieId);
+  const { userRating, setUserRating } = useRate(movieId);
+  const { data: movieDetail, error: movieDetailError } = useFetch(
+    `movie/${movieId}`
+  );
+  const { data: casting, error: castingError } = useFetch(
+    `movie/${movieId}/credits`
+  );
 
   const handleRate = (rate: number) => {
     setUserRating(rate);
-    axios
-      .get(`${baseUrl}/authentication/guest_session/new?${apiKey}`)
-      .then((resp) => {
-        const sessionId = resp.data.guest_session_id;
-        axios.post(
-          `${baseUrl}/movie/${movieId}/rating?${apiKey}&guest_session_id=${sessionId}`,
-          { value: rate }
-        );
-      });
   };
 
-  if (error) throw error;
+  if (movieDetailError || castingError)
+    throw new Error("Something went wrong!");
+
+  const movie = { ...movieDetail, ...casting };
 
   const classification = movie?.adult ? "Only +18" : "Family Movie";
 
   return (
     <View style={styles.screen}>
-      {!!movie ? (
+      {movie ? (
         <>
           <Text style={styles.title}>{movie?.title}</Text>
           <Image
@@ -86,6 +88,9 @@ export default ({ navigation }: ScreenProps) => {
           <View style={styles.section}>
             <Text style={styles.subtitle}>Rate it</Text>
             <Star rating={10} userRating={userRating} onRate={handleRate} />
+          </View>
+          <View>
+            <ScrollView>{}</ScrollView>
           </View>
           <Button
             title="Back"

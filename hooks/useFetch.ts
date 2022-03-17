@@ -1,35 +1,25 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const apiKey = "?api_key=572a752b603222159b7f28cfa392076e";
+import { API_KEY, BASE_URL } from "../constants";
 
-const getMovieDetails = (id: number) => {
-  const movieReq = axios.get(
-    `https://api.themoviedb.org/3/movie/${id}${apiKey}`
-  );
-  const castingReq = axios.get(
-    `https://api.themoviedb.org/3/movie/${id}/credits
-${apiKey}`
-  );
-
-  return [movieReq, castingReq];
-};
-
-const useFetchAll = (id: number) => {
+const useFetchAll = (urlBody: string) => {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<{} | null>(null);
 
+  const url = `${BASE_URL}/${urlBody}?api_key=${API_KEY}`;
+
   useEffect(() => {
     const request = async () => {
       setIsLoading(true);
-
       try {
-        const [movieDetails, casting] = await Promise.all(getMovieDetails(id));
-        setData({ ...movieDetails.data, ...casting.data });
-        setIsLoading(false);
+        const res = await axios.get(url);
+        setData(res.data);
       } catch (err: any) {
         setError(err);
+      } finally {
+        setIsLoading(false);
       }
     };
     request();

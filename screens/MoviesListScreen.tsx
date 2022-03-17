@@ -3,18 +3,18 @@ import { StyleSheet, Text, View } from "react-native";
 
 import Movies from "../components/Movies";
 import Spinner from "../components/Spinner";
-import useFetchAll from "../hooks/useFetchAll";
+import useFetch from "../hooks/useFetch";
 import { ScreenProps } from "../types/screen";
 
-const url = "/movie/now_playing";
-
 export default ({ navigation }: ScreenProps) => {
-  const { data: unsortedMovies, error, isLoading } = useFetchAll(url);
+  const { data, error, isLoading } = useFetch("movie/now_playing");
   const handlePress = (movieId: number): void => {
     navigation.navigate("MovieDetail", { movieId });
   };
 
   if (error) throw error;
+
+  const unsortedMovies = data?.results;
 
   const movies = unsortedMovies?.sort(function (a, b) {
     if (a.title > b.title) {
