@@ -6,7 +6,7 @@ import MovieCard from "./MovieCard";
 
 type MoviesProps = {
   movies: IMovie[] | undefined;
-  handlePress: (item: {}) => void;
+  handlePress: (item: number) => void;
 };
 
 export default ({ movies, handlePress }: MoviesProps) => (

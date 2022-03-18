@@ -10,10 +10,7 @@ type MovieCardProps = {
 export default ({ movie }: MovieCardProps) => (
   <View style={styles.card}>
     <Image
-      style={{
-        width: 290,
-        height: 290,
-      }}
+      style={styles.img}
       source={{
         uri: `http://image.tmdb.org/t/p/w500/${movie.poster_path}`,
       }}
@@ -29,12 +26,17 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     alignItems: "center",
-    marginBottom: 30,
+    marginVertical: 15,
+    padding: 2,
     borderRadius: 5,
     borderWidth: 2,
     backgroundColor: "#f7f7f8",
   },
   title: {
     fontWeight: "bold",
+  },
+  img: {
+    width: "100%",
+    height: 300,
   },
 });

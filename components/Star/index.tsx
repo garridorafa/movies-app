@@ -24,7 +24,7 @@ const StarRender = ({ img, rate, onRate }: StarRenderProps) => (
 type StarProps = {
   rating?: number | null;
   userRating?: number;
-  onRate: (rate: number) => void;
+  onRate?: (rate: number) => void;
 };
 
 export default ({ rating, userRating, onRate }: StarProps) => {

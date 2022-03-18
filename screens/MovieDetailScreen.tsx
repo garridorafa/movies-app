@@ -34,16 +34,12 @@ export default ({ navigation, route }: ScreenProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
   screen: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     margin: 40,
+    maxWidth: 300,
+    marginHorizontal: "auto",
   },
 });
