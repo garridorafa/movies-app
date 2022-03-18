@@ -7,11 +7,11 @@ import {
   View,
 } from "react-native";
 
+import { addFavorite, removeFavorite } from "../../redux/movies-slice";
 import { ICast, IGenre, IMovie } from "../../types/movie";
+import { useDispatch, useSelector } from "react-redux";
 import Star from "../Star";
 import useRate from "../../hooks/useRate";
-import { useDispatch, useSelector } from "react-redux";
-import { addFavorite } from "../../redux/movies-slice";
 
 type GenresListProps = {
   genres: IGenre[];
@@ -48,17 +48,27 @@ type MovieDetailsProps = {
   casting: { cast: ICast[] };
   navigation: { pop: () => void };
 };
+
 export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
   const { userRating, setUserRating } = useRate(movieDetail?.id);
-  const { isLoading } = useSelector((state) => state.movies);
+  const { favorites, isLoading } = useSelector((state) => state.movies);
   const dispatch = useDispatch();
+
+  const isFavorite = favorites.results.some(
+    (f: IMovie) => f.id === movieDetail.id
+  );
 
   const handleRate = (rate: number) => {
     setUserRating(rate);
   };
 
   const handleAddFavorite = () => {
-    dispatch(addFavorite(movieDetail.id));
+    dispatch(addFavorite(movieDetail));
+  };
+
+  const handleRemoveFavorite = () => {
+    dispatch(removeFavorite(movieDetail.id));
+    navigation.navigate("Favorites");
   };
 
   const classification = movieDetail?.adult ? "Only +18" : "Family Movie";
@@ -88,13 +98,23 @@ export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
         <Star rating={10} userRating={userRating} onRate={handleRate} />
       </View>
       <View style={styles.buttons}>
-        <Button
-          title="Add to favorite"
-          onPress={() => {
-            handleAddFavorite();
-          }}
-          disabled={isLoading}
-        />
+        {isFavorite ? (
+          <Button
+            title="Remove favorite"
+            onPress={() => {
+              handleRemoveFavorite();
+            }}
+            disabled={isLoading}
+          />
+        ) : (
+          <Button
+            title="Add favorite"
+            onPress={() => {
+              handleAddFavorite();
+            }}
+            disabled={isLoading}
+          />
+        )}
         <Button
           title="Back"
           onPress={() => {

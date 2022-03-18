@@ -13,12 +13,10 @@ const useFetchAll = (movieId: number) => {
       if (userRating !== 0) {
         setIsLoading(true);
         try {
-          const resp = await axios.post(
+          await axios.post(
             `${BASE_URL}/movie/${movieId}/rating?api_key=${API_KEY}&session_id=${SESSION_ID}`,
             { value: userRating }
           );
-
-          console.log(resp);
         } catch (err: any) {
           setError(err);
         } finally {
