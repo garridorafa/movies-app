@@ -55,23 +55,19 @@ export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
 
   const classification = movieDetail?.adult ? "Only +18" : "Family Movie";
   return (
-    <View>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>{movieDetail?.title}</Text>
       <Image
-        style={{
-          width: 400,
-          height: 400,
-        }}
+        style={styles.img}
         source={{
           uri: `http://image.tmdb.org/t/p/w500/${movieDetail?.poster_path}`,
         }}
       />
       <Text>{movieDetail?.release_date}</Text>
       <GenresList genres={movieDetail?.genres} />
-      <Text>{classification}</Text>
-      <Text style={styles.description}>
-        Description: {movieDetail?.overview}
-      </Text>
+      <Text style={styles.classification}>{classification}</Text>
+      <Text style={styles.subtitle}>Description</Text>
+      <Text style={styles.description}>{movieDetail?.overview}</Text>
       <CastingList casting={casting?.cast} />
       <View style={styles.section}>
         <Text style={styles.subtitle}>Rate it</Text>
@@ -86,21 +82,28 @@ export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
           navigation.pop();
         }}
       />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#f7f7f8" },
   title: { marginBottom: 20, fontWeight: "bold", fontSize: 50 },
   subtitle: { fontSize: 20 },
-  description: { margin: 20 },
+  description: { margin: 10, textAlign: "justify" },
+  classification: { alignSelf: "center" },
   genres: {
     flexDirection: "row",
+    justifyContent: "center",
   },
   genreText: {
     padding: 5,
   },
   section: {
     marginBottom: 20,
+  },
+  img: {
+    width: "auto",
+    height: 400,
   },
 });

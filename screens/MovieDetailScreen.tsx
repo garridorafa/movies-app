@@ -5,8 +5,8 @@ import MovieDetails from "../components/Movies/MovieDetails";
 import Spinner from "../components/Spinner";
 import useFetch from "../hooks/useFetch";
 
-export default ({ navigation }: ScreenProps) => {
-  const movieId = navigation.getParam("movieId");
+export default ({ navigation, route }: ScreenProps) => {
+  const { movieId } = route.params;
 
   const { data: movieDetail, error: movieDetailError } = useFetch(
     `movie/${movieId}`
@@ -34,8 +34,15 @@ export default ({ navigation }: ScreenProps) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
   screen: {
     flex: 1,
+    justifyContent: "center",
     alignItems: "center",
     margin: 40,
   },

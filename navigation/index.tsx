@@ -1,12 +1,16 @@
-import { createStackNavigator } from "react-navigation-stack";
-import { createAppContainer } from "react-navigation";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import MovieDetailScreen from "../screens/MovieDetailScreen";
 import MoviesListScreen from "../screens/MoviesListScreen";
 
-const Navigation = createStackNavigator({
-  Movies: MoviesListScreen,
-  MovieDetail: MovieDetailScreen,
-});
+const Stack = createNativeStackNavigator();
 
-export default createAppContainer(Navigation);
+export default () => (
+  <NavigationContainer>
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen name="List of movies" component={MoviesListScreen} />
+      <Stack.Screen name="Details" component={MovieDetailScreen} />
+    </Stack.Navigator>
+  </NavigationContainer>
+);

@@ -1,22 +1,23 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
+import { IMovie } from "../types/movie";
+import { ScreenProps } from "../types/screen";
 import Movies from "../components/Movies";
 import Spinner from "../components/Spinner";
 import useFetch from "../hooks/useFetch";
-import { ScreenProps } from "../types/screen";
 
 export default ({ navigation }: ScreenProps) => {
   const { data, error, isLoading } = useFetch("movie/now_playing");
   const handlePress = (movieId: number): void => {
-    navigation.navigate("MovieDetail", { movieId });
+    navigation.navigate("Details", { movieId });
   };
 
   if (error) throw error;
 
   const unsortedMovies = data?.results;
 
-  const movies = unsortedMovies?.sort(function (a, b) {
+  const movies = unsortedMovies?.sort(function (a: IMovie, b: IMovie) {
     if (a.title > b.title) {
       return 1;
     }
@@ -28,7 +29,6 @@ export default ({ navigation }: ScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>List of movies</Text>
       {!isLoading ? (
         <Movies movies={movies} handlePress={handlePress} />
       ) : (
@@ -42,7 +42,6 @@ export default ({ navigation }: ScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
