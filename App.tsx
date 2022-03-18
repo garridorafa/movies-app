@@ -1,28 +1,19 @@
-import Navigation from "./navigation";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
+
+import Navigation from "./navigation";
 import store from "./redux/store";
-import { useEffect } from "react";
-import { fetchSessionId } from "./redux/auth-slice";
 
 function App() {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchSessionId());
-  }, []);
-
   return (
-    <SafeAreaProvider>
-      <Navigation />
-      <StatusBar />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <Navigation />
+        <StatusBar />
+      </SafeAreaProvider>
+    </Provider>
   );
 }
 
-export default () => (
-  <Provider store={store}>
-    <App />
-  </Provider>
-);
+export default () => <App />;

@@ -63,18 +63,21 @@ export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
           uri: `http://image.tmdb.org/t/p/w500/${movieDetail?.poster_path}`,
         }}
       />
-      <Text>{movieDetail?.release_date}</Text>
-      <GenresList genres={movieDetail?.genres} />
-      <Text style={styles.classification}>{classification}</Text>
-      <Text style={styles.subtitle}>Description</Text>
-      <Text style={styles.description}>{movieDetail?.overview}</Text>
-      <CastingList casting={casting?.cast} />
-      <View style={styles.section}>
-        <Text style={styles.subtitle}>Rate it</Text>
-        <Star rating={10} userRating={userRating} onRate={handleRate} />
+      <View>
+        <Text>{movieDetail?.release_date}</Text>
+        <GenresList genres={movieDetail?.genres} />
+        <Text style={styles.classification}>{classification}</Text>
       </View>
       <View>
-        <ScrollView>{}</ScrollView>
+        <Text style={styles.subtitle}>Description</Text>
+        <Text style={styles.description}>{movieDetail?.overview}</Text>
+      </View>
+      <View>
+        <CastingList casting={casting?.cast} />
+        <View style={styles.section}>
+          <Text style={styles.subtitle}>Rate it</Text>
+          <Star rating={10} userRating={userRating} onRate={handleRate} />
+        </View>
       </View>
       <Button
         title="Back"
@@ -103,7 +106,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   img: {
-    width: "auto",
-    height: 400,
+    width: 400,
+    height: 600,
+    marginRight: "auto",
+    marginLeft: "auto",
   },
 });

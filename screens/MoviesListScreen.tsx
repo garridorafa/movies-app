@@ -12,7 +12,6 @@ import Spinner from "../components/Spinner";
 export default ({ navigation }: ScreenProps) => {
   const dispatch = useDispatch();
   const { movies: data, isLoading } = useSelector((state) => state.movies);
-  const { sessionId } = useSelector((state) => state.auth);
 
   const handlePress = (movieId: number): void => {
     navigation.navigate("Details", { movieId });
