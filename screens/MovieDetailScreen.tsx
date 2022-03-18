@@ -38,8 +38,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    margin: 40,
-    maxWidth: 300,
-    marginHorizontal: "auto",
+    maxWidth: 500,
+    padding: 10,
+    marginLeft: "auto",
+    marginRight: "auto",
   },
 });

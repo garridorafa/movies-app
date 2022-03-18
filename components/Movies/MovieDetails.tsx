@@ -87,10 +87,10 @@ export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f7f7f8" },
+  container: { flex: 1, backgroundColor: "#f7f7f8", marginHorizontal: "auto" },
   title: { marginBottom: 20, fontWeight: "bold", fontSize: 50 },
   subtitle: { fontSize: 20 },
-  description: { margin: 10, textAlign: "justify" },
+  description: { marginVertical: 10, textAlign: "justify" },
   classification: { alignSelf: "center" },
   genres: {
     flexDirection: "row",

@@ -1,23 +1,30 @@
-import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { StatusBar } from "expo-status-bar";
 
+import { fetchAllMovies } from "../redux/movies-slice";
 import { IMovie } from "../types/movie";
 import { ScreenProps } from "../types/screen";
 import Movies from "../components/Movies";
 import Spinner from "../components/Spinner";
-import useFetch from "../hooks/useFetch";
 
 export default ({ navigation }: ScreenProps) => {
-  const { data, error, isLoading } = useFetch("movie/now_playing");
+  const dispatch = useDispatch();
+  const { movies: data, isLoading } = useSelector((state) => state.movies);
+  const { sessionId } = useSelector((state) => state.auth);
+
   const handlePress = (movieId: number): void => {
     navigation.navigate("Details", { movieId });
   };
 
-  if (error) throw error;
+  useEffect(() => {
+    dispatch(fetchAllMovies());
+  }, []);
 
   const unsortedMovies = data?.results;
 
-  const movies = unsortedMovies?.sort(function (a: IMovie, b: IMovie) {
+  const movies = unsortedMovies?.slice().sort(function (a: IMovie, b: IMovie) {
     if (a.title > b.title) {
       return 1;
     }
