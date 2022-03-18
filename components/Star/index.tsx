@@ -5,12 +5,12 @@ import StartFullIcon from "../../assets/star-icon-full.jpg";
 
 type StarRenderProps = {
   img: any;
-  rate: number;
-  onRate?: (rate: number) => void;
+  rating: number;
+  onRate?: (rating: number) => void;
 };
 
-const StarRender = ({ img, rate, onRate }: StarRenderProps) => (
-  <TouchableOpacity onPress={() => onRate(rate)}>
+const StarRender = ({ img, rating, onRate }: StarRenderProps) => (
+  <TouchableOpacity onPress={() => onRate(rating)}>
     <Image
       style={{
         width: 25,
@@ -24,7 +24,7 @@ const StarRender = ({ img, rate, onRate }: StarRenderProps) => (
 type StarProps = {
   rating?: number | null;
   userRating?: number;
-  onRate?: (rate: number) => void;
+  onRate?: (rating: number) => void;
 };
 
 export default ({ rating, userRating, onRate }: StarProps) => {
@@ -39,7 +39,7 @@ export default ({ rating, userRating, onRate }: StarProps) => {
             <StarRender
               img={i >= userRating ? StarIcon : StartFullIcon}
               key={i}
-              rate={i + 1}
+              rating={i + 1}
               onRate={onRate}
             />
           ))
@@ -47,7 +47,7 @@ export default ({ rating, userRating, onRate }: StarProps) => {
             <StarRender
               img={StartFullIcon}
               key={i}
-              rate={i + 1}
+              rating={i + 1}
               onRate={onRate}
             />
           ))}

@@ -6,4 +6,5 @@ export type ScreenProps = {
     pop: () => void;
     getParam: (paramName: string) => number;
   };
+  route: { params: any };
 };

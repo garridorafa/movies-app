@@ -2,16 +2,33 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 import { ACCOUNT_ID, API_KEY, BASE_URL, SESSION_ID } from "../constants";
-import { IMovie } from "../types/movie";
+import { IMovie, IRatedMovie } from "../types/movie";
 
 const moviesUrl = `${BASE_URL}/movie/now_playing?api_key=${API_KEY}`;
 const favoritesUrl = `${BASE_URL}/account/${ACCOUNT_ID}/favorite/movies?sort_by=created_at.desc&api_key=${API_KEY}&session_id=${SESSION_ID}`;
+const ratedUrl = `${BASE_URL}/account/${ACCOUNT_ID}/rated/movies?sort_by=created_at.desc&api_key=${API_KEY}&session_id=${SESSION_ID}`;
 
 export const fetchAllMovies = createAsyncThunk("movies/getMovies", async () => {
-  const movies = await axios.get(moviesUrl);
-  const favorites = await axios.get(favoritesUrl);
+  const getMovies = axios.get(moviesUrl);
+  const getFavorites = axios.get(favoritesUrl);
+  const getRatedMovies = axios.get(ratedUrl);
 
-  return { movies: movies.data, favorites: favorites.data };
+  const [movies, favorites, ratedMovies] = await Promise.all([
+    getMovies,
+    getFavorites,
+    getRatedMovies,
+  ]);
+
+  return {
+    movies: movies.data,
+    favorites: favorites.data,
+    ratedMovies: [
+      ...ratedMovies.data.results.map((ratedMovie: IRatedMovie) => ({
+        id: ratedMovie.id,
+        rating: ratedMovie.rating,
+      })),
+    ],
+  };
 });
 
 export const addFavorite = createAsyncThunk(
@@ -46,10 +63,23 @@ export const removeFavorite = createAsyncThunk(
   }
 );
 
+export const rateMovie = createAsyncThunk(
+  "movies/rateMovie",
+  async (movieId: number, userRating: number) => {
+    await axios.post(
+      `${BASE_URL}/movie/${movieId}/rating?api_key=${API_KEY}&session_id=${SESSION_ID}`,
+      { value: userRating }
+    );
+
+    return movieId;
+  }
+);
+
 const moviesSlice = createSlice({
   name: "movies",
   initialState: {
     movies: null,
+    ratedMovies: [],
     favorites: {
       results: [],
     },
@@ -64,6 +94,7 @@ const moviesSlice = createSlice({
     builder.addCase(fetchAllMovies.fulfilled, (state, action) => {
       state.movies = action.payload.movies;
       state.favorites = action.payload.favorites;
+      state.ratedMovies = action.payload.ratedMovies;
       state.isLoading = false;
     });
     builder.addCase(fetchAllMovies.rejected, (state) => {
@@ -91,6 +122,19 @@ const moviesSlice = createSlice({
       state.isLoading = false;
     });
     builder.addCase(removeFavorite.rejected, (state) => {
+      state.isLoading = false;
+    });
+    // rateMovie
+    builder.addCase(rateMovie.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(rateMovie.fulfilled, (state, action) => {
+      state.ratedMovies = state.ratedMovies.filter(
+        (rm) => rm.id !== action.payload
+      );
+      state.isLoading = false;
+    });
+    builder.addCase(rateMovie.rejected, (state) => {
       state.isLoading = false;
     });
   },

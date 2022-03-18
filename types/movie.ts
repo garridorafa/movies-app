@@ -10,6 +10,10 @@ export interface IMovie {
   adult: boolean;
 }
 
+export interface IRatedMovie extends IMovie {
+  rating: number;
+}
+
 export interface IGenre {
   id: number;
   name: string;

@@ -23,6 +23,7 @@ const useFetchAll = (urlBody: string) => {
       }
     };
     request();
+    return;
   }, []);
 
   return {

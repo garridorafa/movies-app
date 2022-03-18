@@ -1,29 +1,36 @@
 import { StyleSheet, View } from "react-native";
+import { useSelector } from "react-redux";
 
+import { IRatedMovie } from "../types/movie";
 import { ScreenProps } from "../types/screen";
 import MovieDetails from "../components/Movies/MovieDetails";
 import Spinner from "../components/Spinner";
 import useFetch from "../hooks/useFetch";
 
 export default ({ navigation, route }: ScreenProps) => {
+  const { ratedMovies } = useSelector((state) => state.movies);
   const { movieId } = route.params;
 
-  const { data: movieDetail, error: movieDetailError } = useFetch(
-    `movie/${movieId}`
-  );
+  const { data: MovieDetail, error: movieError } = useFetch(`movie/${movieId}`);
   const { data: casting, error: castingError } = useFetch(
     `movie/${movieId}/credits`
   );
 
-  if (movieDetailError || castingError)
-    throw new Error("Something went wrong!");
+  if (movieError || castingError) throw new Error("Something went wrong!");
+
+  if (!MovieDetail || !casting) return <Spinner />;
+
+  const ratedMovie = ratedMovies?.find(
+    (rm: IRatedMovie) => rm.id === MovieDetail.id
+  );
 
   return (
     <View style={styles.screen}>
-      {movieDetail ? (
+      {MovieDetail ? (
         <MovieDetails
-          movieDetail={movieDetail}
+          movieDetail={MovieDetail}
           casting={casting}
+          rating={ratedMovie?.rating ?? 0}
           navigation={navigation}
         />
       ) : (

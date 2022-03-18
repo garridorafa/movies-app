@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Button,
   Image,
@@ -7,11 +8,14 @@ import {
   View,
 } from "react-native";
 
-import { addFavorite, removeFavorite } from "../../redux/movies-slice";
+import {
+  addFavorite,
+  rateMovie,
+  removeFavorite,
+} from "../../redux/movies-slice";
 import { ICast, IGenre, IMovie } from "../../types/movie";
 import { useDispatch, useSelector } from "react-redux";
 import Star from "../Star";
-import useRate from "../../hooks/useRate";
 
 type GenresListProps = {
   genres: IGenre[];
@@ -46,11 +50,20 @@ const CastingList = ({ casting = [] }: CastingListProps) => (
 type MovieDetailsProps = {
   movieDetail: IMovie;
   casting: { cast: ICast[] };
-  navigation: { pop: () => void };
+  rating: number;
+  navigation: {
+    pop: () => void;
+    navigate: (routeName: string) => void;
+  };
 };
 
-export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
-  const { userRating, setUserRating } = useRate(movieDetail?.id);
+export default ({
+  movieDetail,
+  casting,
+  rating,
+  navigation,
+}: MovieDetailsProps) => {
+  const [userRating, setUserRating] = useState<number>(rating);
   const { favorites, isLoading } = useSelector((state) => state.movies);
   const dispatch = useDispatch();
 
@@ -58,8 +71,9 @@ export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
     (f: IMovie) => f.id === movieDetail.id
   );
 
-  const handleRate = (rate: number) => {
-    setUserRating(rate);
+  const handleRate = (newRate: number) => {
+    dispatch(rateMovie(newRate));
+    setUserRating(newRate);
   };
 
   const handleAddFavorite = () => {
@@ -68,7 +82,6 @@ export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
 
   const handleRemoveFavorite = () => {
     dispatch(removeFavorite(movieDetail.id));
-    navigation.navigate("Favorites");
   };
 
   const classification = movieDetail?.adult ? "Only +18" : "Family Movie";
@@ -94,7 +107,7 @@ export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
         <CastingList casting={casting?.cast} />
       </View>
       <View style={styles.section}>
-        <Text style={styles.subtitle}>Rate it</Text>
+        <Text style={styles.subtitle}>rating it</Text>
         <Star rating={10} userRating={userRating} onRate={handleRate} />
       </View>
       <View style={styles.buttons}>
