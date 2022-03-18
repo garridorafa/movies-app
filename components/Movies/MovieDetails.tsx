@@ -10,6 +10,8 @@ import {
 import { ICast, IGenre, IMovie } from "../../types/movie";
 import Star from "../Star";
 import useRate from "../../hooks/useRate";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite } from "../../redux/movies-slice";
 
 type GenresListProps = {
   genres: IGenre[];
@@ -48,9 +50,15 @@ type MovieDetailsProps = {
 };
 export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
   const { userRating, setUserRating } = useRate(movieDetail?.id);
+  const { isLoading } = useSelector((state) => state.movies);
+  const dispatch = useDispatch();
 
   const handleRate = (rate: number) => {
     setUserRating(rate);
+  };
+
+  const handleAddFavorite = () => {
+    dispatch(addFavorite(movieDetail.id));
   };
 
   const classification = movieDetail?.adult ? "Only +18" : "Family Movie";
@@ -74,17 +82,27 @@ export default ({ movieDetail, casting, navigation }: MovieDetailsProps) => {
       </View>
       <View>
         <CastingList casting={casting?.cast} />
-        <View style={styles.section}>
-          <Text style={styles.subtitle}>Rate it</Text>
-          <Star rating={10} userRating={userRating} onRate={handleRate} />
-        </View>
       </View>
-      <Button
-        title="Back"
-        onPress={() => {
-          navigation.pop();
-        }}
-      />
+      <View style={styles.section}>
+        <Text style={styles.subtitle}>Rate it</Text>
+        <Star rating={10} userRating={userRating} onRate={handleRate} />
+      </View>
+      <View style={styles.buttons}>
+        <Button
+          title="Add to favorite"
+          onPress={() => {
+            handleAddFavorite();
+          }}
+          disabled={isLoading}
+        />
+        <Button
+          title="Back"
+          onPress={() => {
+            navigation.pop();
+          }}
+          color={"red"}
+        />
+      </View>
     </ScrollView>
   );
 };
@@ -110,5 +128,9 @@ const styles = StyleSheet.create({
     height: 600,
     marginRight: "auto",
     marginLeft: "auto",
+  },
+  buttons: {
+    justifyContent: "space-between",
+    height: 80,
   },
 });
