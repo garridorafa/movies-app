@@ -31,7 +31,6 @@ export default ({ navigation, route }: ScreenProps) => {
           movieDetail={MovieDetail}
           casting={casting}
           rating={ratedMovie?.rating ?? 0}
-          navigation={navigation}
         />
       ) : (
         <Spinner />

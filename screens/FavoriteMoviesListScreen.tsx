@@ -6,7 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { fetchAllMovies } from "../redux/movies-slice";
 import { IMovie } from "../types/movie";
 import { ScreenProps } from "../types/screen";
-import Movies from "../components/Movies";
+import Movies from "../components/Movies/MoviesList";
 import Spinner from "../components/Spinner";
 
 export default ({ navigation }: ScreenProps) => {

@@ -18,6 +18,9 @@ import {
 import { ICast, IGenre, IMovie } from "../../types/movie";
 import Star from "../Star";
 import useFetchAll from "../../hooks/useFetch";
+import CastingList from "../Casting/CastingList";
+import RecommendationList from "../Recommendation/RecommendationList";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 
 type GenresListProps = {
   genres: IGenre[];
@@ -33,70 +36,22 @@ const GenresList = ({ genres = [] }: GenresListProps) => (
   </View>
 );
 
-type CastingListProps = {
-  casting: {
-    name: string;
-    character: string;
-  }[];
-};
-
-const CastingList = ({ casting = [] }: CastingListProps) => (
-  <View style={styles.section}>
-    <Text style={styles.subtitle}>Casting</Text>
-    {casting.map((actor: any) => (
-      <Text key={actor.id}>{`${actor.name} as ${actor.character}`}</Text>
-    ))}
-  </View>
-);
-
-const RecommendationCard = ({
-  movie,
-  handlePress,
-}: {
-  movie: IMovie;
-  handlePress: (movieId: number) => void;
-}) => (
-  <TouchableOpacity
-    onPress={() => handlePress(movie.id)}
-    style={{ alignItems: "center" }}
-  >
-    <Image
-      source={{
-        uri: `http://image.tmdb.org/t/p/w500/${movie.poster_path}`,
-      }}
-      style={{ height: 120, width: 70 }}
-    />
-    <Text style={{ textAlign: "center", width: 100 }}>{movie.title}</Text>
-  </TouchableOpacity>
-);
-
 type MovieDetailsProps = {
   movieDetail: IMovie;
   casting: { cast: ICast[] };
   rating: number;
-  navigation: {
-    pop: () => void;
-    navigate: (routeName: string, params?: {}) => void;
-    push: (routeName: string, params?: {}) => void;
-  };
 };
 
-export default ({
-  movieDetail,
-  casting,
-  rating,
-  navigation,
-}: MovieDetailsProps) => {
+export default ({ movieDetail, casting, rating }: MovieDetailsProps) => {
   const dispatch = useDispatch();
   const [userRating, setUserRating] = useState<number>(rating);
   const { favorites, isLoading } = useSelector((state) => state.movies);
+  const navigation = useNavigation();
   const { data: recommendationsData } = useFetchAll(
     `/movie/${movieDetail.id}/recommendations`
   );
 
-  const handlePress = (movieId: number) => {
-    navigation.push("Details", { movieId });
-  };
+  const classification = movieDetail?.adult ? "Only +18" : "Family Movie";
 
   const recommendations = recommendationsData
     ? recommendationsData?.results?.slice(0, 3)
@@ -119,7 +74,6 @@ export default ({
     dispatch(removeFavorite(movieDetail.id));
   };
 
-  const classification = movieDetail?.adult ? "Only +18" : "Family Movie";
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{movieDetail?.title}</Text>
@@ -144,21 +98,7 @@ export default ({
       </View>
       <View>
         <Text style={styles.subtitle}>You may also like</Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            margin: 0,
-          }}
-        >
-          {recommendations.map((movie: IMovie) => (
-            <RecommendationCard
-              key={movie.id}
-              movie={movie}
-              handlePress={handlePress}
-            />
-          ))}
-        </View>
+        <RecommendationList recommendations={recommendations} />
       </View>
       <View>
         <CastingList casting={casting?.cast} />
