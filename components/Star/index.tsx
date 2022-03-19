@@ -10,15 +10,21 @@ type StarRenderProps = {
 };
 
 const StarRender = ({ img, rating, onRate }: StarRenderProps) => (
-  <TouchableOpacity onPress={() => onRate(rating)}>
-    <Image
-      style={{
-        width: 25,
-        height: 25,
-      }}
-      source={img}
-    />
-  </TouchableOpacity>
+  <>
+    {onRate ? (
+      <TouchableOpacity
+        onPress={() => {
+          onRate(rating);
+        }}
+      >
+        <Image style={styles.img} source={img} />
+      </TouchableOpacity>
+    ) : (
+      <View>
+        <Image style={styles.img} source={img} />
+      </View>
+    )}
+  </>
 );
 
 type StarProps = {
@@ -60,5 +66,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     overflow: "hidden",
+  },
+  img: {
+    width: 25,
+    height: 25,
   },
 });

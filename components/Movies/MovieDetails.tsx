@@ -5,8 +5,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   addFavorite,
@@ -14,8 +16,8 @@ import {
   removeFavorite,
 } from "../../redux/movies-slice";
 import { ICast, IGenre, IMovie } from "../../types/movie";
-import { useDispatch, useSelector } from "react-redux";
 import Star from "../Star";
+import useFetchAll from "../../hooks/useFetch";
 
 type GenresListProps = {
   genres: IGenre[];
@@ -47,13 +49,35 @@ const CastingList = ({ casting = [] }: CastingListProps) => (
   </View>
 );
 
+const RecommendationCard = ({
+  movie,
+  handlePress,
+}: {
+  movie: IMovie;
+  handlePress: (movieId: number) => void;
+}) => (
+  <TouchableOpacity
+    onPress={() => handlePress(movie.id)}
+    style={{ alignItems: "center" }}
+  >
+    <Image
+      source={{
+        uri: `http://image.tmdb.org/t/p/w500/${movie.poster_path}`,
+      }}
+      style={{ height: 120, width: 70 }}
+    />
+    <Text style={{ textAlign: "center", width: 100 }}>{movie.title}</Text>
+  </TouchableOpacity>
+);
+
 type MovieDetailsProps = {
   movieDetail: IMovie;
   casting: { cast: ICast[] };
   rating: number;
   navigation: {
     pop: () => void;
-    navigate: (routeName: string) => void;
+    navigate: (routeName: string, params?: {}) => void;
+    push: (routeName: string, params?: {}) => void;
   };
 };
 
@@ -63,9 +87,20 @@ export default ({
   rating,
   navigation,
 }: MovieDetailsProps) => {
+  const dispatch = useDispatch();
   const [userRating, setUserRating] = useState<number>(rating);
   const { favorites, isLoading } = useSelector((state) => state.movies);
-  const dispatch = useDispatch();
+  const { data: recommendationsData } = useFetchAll(
+    `/movie/${movieDetail.id}/recommendations`
+  );
+
+  const handlePress = (movieId: number) => {
+    navigation.push("Details", { movieId });
+  };
+
+  const recommendations = recommendationsData
+    ? recommendationsData?.results?.slice(0, 3)
+    : [];
 
   const isFavorite = favorites.results.some(
     (f: IMovie) => f.id === movieDetail.id
@@ -99,16 +134,34 @@ export default ({
         <GenresList genres={movieDetail?.genres} />
         <Text style={styles.classification}>{classification}</Text>
       </View>
+      <View style={styles.section}>
+        <Text style={styles.subtitle}>Rate it</Text>
+        <Star rating={10} userRating={userRating} onRate={handleRate} />
+      </View>
       <View>
         <Text style={styles.subtitle}>Description</Text>
         <Text style={styles.description}>{movieDetail?.overview}</Text>
       </View>
       <View>
-        <CastingList casting={casting?.cast} />
+        <Text style={styles.subtitle}>You may also like</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            margin: 0,
+          }}
+        >
+          {recommendations.map((movie: IMovie) => (
+            <RecommendationCard
+              key={movie.id}
+              movie={movie}
+              handlePress={handlePress}
+            />
+          ))}
+        </View>
       </View>
-      <View style={styles.section}>
-        <Text style={styles.subtitle}>rating it</Text>
-        <Star rating={10} userRating={userRating} onRate={handleRate} />
+      <View>
+        <CastingList casting={casting?.cast} />
       </View>
       <View style={styles.buttons}>
         {isFavorite ? (
@@ -157,7 +210,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   img: {
-    width: 400,
+    width: 350,
     height: 600,
     marginRight: "auto",
     marginLeft: "auto",
