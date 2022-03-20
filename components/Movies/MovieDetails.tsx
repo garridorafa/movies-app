@@ -5,10 +5,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 import {
   addFavorite,
@@ -16,11 +16,10 @@ import {
   removeFavorite,
 } from "../../redux/movies-slice";
 import { ICast, IGenre, IMovie } from "../../types/movie";
-import Star from "../Star";
-import useFetchAll from "../../hooks/useFetch";
 import CastingList from "../Casting/CastingList";
 import RecommendationList from "../Recommendation/RecommendationList";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import Star from "../Star";
+import useFetchAll from "../../hooks/useFetch";
 
 type GenresListProps = {
   genres: IGenre[];
