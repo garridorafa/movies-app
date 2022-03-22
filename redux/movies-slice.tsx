@@ -63,15 +63,22 @@ export const removeFavorite = createAsyncThunk(
   }
 );
 
+type RateMovieAction = {
+  movieId: number;
+  userRating: number;
+};
+
 export const rateMovie = createAsyncThunk(
   "movies/rateMovie",
-  async (movieId: number, userRating: number) => {
+  async (action: RateMovieAction) => {
+    const { movieId, userRating } = action;
+
     await axios.post(
       `${BASE_URL}/movie/${movieId}/rating?api_key=${API_KEY}&session_id=${SESSION_ID}`,
       { value: userRating }
     );
 
-    return movieId;
+    return { movieId, userRating };
   }
 );
 
@@ -129,9 +136,15 @@ const moviesSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(rateMovie.fulfilled, (state, action) => {
-      state.ratedMovies = state.ratedMovies.filter(
-        (rm) => rm.id !== action.payload
-      );
+      const { movieId, userRating } = action.payload;
+
+      for (const rm of state.ratedMovies) {
+        if (rm.id === movieId) {
+          rm.rating = userRating;
+
+          break;
+        }
+      }
       state.isLoading = false;
     });
     builder.addCase(rateMovie.rejected, (state) => {

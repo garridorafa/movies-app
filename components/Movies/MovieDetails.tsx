@@ -61,7 +61,12 @@ export default ({ movieDetail, casting, rating }: MovieDetailsProps) => {
   );
 
   const handleRate = (newRate: number) => {
-    dispatch(rateMovie(newRate));
+    dispatch(
+      rateMovie({
+        movieId: movieDetail.id,
+        userRating: newRate,
+      })
+    );
     setUserRating(newRate);
   };
 
